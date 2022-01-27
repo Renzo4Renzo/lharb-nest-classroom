@@ -6,8 +6,6 @@ import {
   UpdateStudentDTO,
 } from './dto/student.dto';
 import { v4 as uuid } from 'uuid';
-import { identity } from 'rxjs';
-import { platform } from 'os';
 
 @Injectable()
 export class StudentService {
@@ -43,9 +41,35 @@ export class StudentService {
           id: studentId,
           ...payload,
         };
+        return updatedStudent;
       } else return student;
     });
     this.studentList = updatedStudentList;
+    return updatedStudent;
+  }
+
+  getStudentsByTeacherId(teacherId: string): StudentResponseDTO[] {
+    return this.studentList.filter((student) => {
+      return student.teacher === teacherId;
+    });
+  }
+
+  updateStudentTeacher(
+    studentId: string,
+    teacherId: string,
+  ): StudentResponseDTO {
+    let updatedStudent: StudentResponseDTO;
+
+    const updatedStudentsList = this.studentList.map((student) => {
+      if (student.id === studentId) {
+        updatedStudent = {
+          ...student,
+          teacher: teacherId,
+        };
+        return updatedStudent;
+      } else return student;
+    });
+    this.studentList = updatedStudentsList;
     return updatedStudent;
   }
 }
